@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figure 4.1 - AI Evaluation Framework | Public Health Textbook</title>
+    <style>
+        /* Header Styles */
+        .textbook-header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .textbook-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        
+        .chapter-info {
+            font-size: 1.1rem;
+            text-align: center;
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        .figure-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .figure-reference {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        /* Fixed Concept Information Section */
+        .concept-info {
+            background: #f8f9fa;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            min-height: 100px;
+            transition: all 0.3s ease;
+        }
+        
+        .concept-info h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+ font-size: 1.8rem; /* Increased from default ~1.2rem */
+        }
+        
+        .concept-info p {
+            margin: 10px 0 0 0;
+            color: #555;
+            line-height: 1.5;
+font-size: 1.3rem; /* Also increase paragraph text */
+        }
+        
+        .concept-info.empty {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+            text-align: center;
+            max-width: 100%;
+        }
+        
+        #concept-image {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: block;
+        }
+        
+        /* SVG Overlay for percentage-based hotspots - constrained to image */
+        .hotspot-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .hotspot-overlay rect {
+            pointer-events: all;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s, fill 0.3s;
+            fill: #3498db;
+        }
+        
+        /* Development mode - always show hotspots with subtle styling */
+        .development-mode .hotspot-overlay rect {
+            opacity: 0.15;
+            fill: #3498db;
+        }
+        
+        .development-mode .hotspot-overlay rect:hover {
+            opacity: 0.4;
+            fill: #e74c3c;
+        }
+        
+        /* Normal mode - only show on hover */
+        .hotspot-overlay rect:hover {
+            opacity: 0.3;
+            fill: #3498db;
+        }
+        
+        .development-controls {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        
+        .development-controls label {
+            font-weight: bold;
+            color: #856404;
+            margin-right: 10px;
+        }
+        
+        .legend {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .legend h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .coordinate-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        /* Ensure the image wrapper constrains the SVG properly */
+        .image-wrapper {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        /* Footer */
+        .textbook-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <!-- Textbook Header -->
+    <header class="textbook-header">
+        <div class="header-container">
+            <div class="textbook-title">
+                Springer Book: Artificial Intelligence in Public Health (Min Wu, 2026, ISBN: 978-3-032-15871-0)
+            </div>
+           
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="figure-title"> Interactive Concept Map for AI Evaluation</div>
+        <div class="figure-reference">Figure 4.1: Big Picture of Concepts Related to AI Evaluations, Chapter 4: Evaluation Methods for AI in Public Health</div>
+        
+        <div class="description">
+            <p>Hover over any concept to see its definition in the information panel below.</p>
+        </div>
+
+        <!-- Fixed Concept Information Section -->
+        <div class="concept-info empty" id="concept-info">
+            Hover over any concept in the diagram to see its definition here...
+        </div>
+
+      
+        
+        <div class="image-container">
+            <div class="image-wrapper">
+                <!-- Replace with your actual image path -->
+                <img src="images/Fig-4-1-concept-map.PNG" alt="AI in Public Health Evaluation Concept Map" id="concept-image">
+                
+                <!-- SVG Overlay for percentage-based hotspots -->
+                <svg class="hotspot-overlay" id="hotspot-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <!-- 
+                    Percentage-based coordinates: 
+                    x%, y%, width%, height%
+                    Adjust these values to match your diagram layout
+                    -->
+                    
+                    <!-- Core Goal - Center -->
+                    <rect x="30" y="5" width="14" height="8" 
+                          data-concept="user_acceptance" data-title="User Acceptance"
+                          data-definition="Will users adopt and trust the AI tool? &nbsp; &nbsp;The narrower concepts are <b>Quality</b>, <b>Safety</b>, <b> Applicability</b>, <b> Appropriateness</b>,<b> Readability</b>, <b> Usability</b>,<b> Accessibility</b>, <b> Economic Factors</b>,<b> Emotional Facctors</b>."></rect>
+                    
+                    <!-- Quality Pillar - Left -->
+                    <rect x="33" y="25" width="10" height="6" 
+                          data-concept="quality" data-title="Quality"
+                          data-definition="Does the AI work accurately in the real world? Is its output actionable for health professionals? &nbsp; &nbsp;The narrower concepts are <b>Accuracy</b>, <b>Reliability</b>, <b> Completeness</b>.&nbsp;The broader concept is <b>User Acceptance</b>. &nbsp;The overlapped concept is <b>Safety</b>."></rect>
+                    <rect x="59" y="30" width="10" height="5" 
+                          data-concept="accuracy" data-title="Accuracy"
+                          data-definition="Is the information correct and precise? Measures how close AI outputs are to ground truth or expert judgment. &nbsp;The broader concepts are <b>Quality</b> and <b> Saftety</b>."></rect>
+                    <rect x="58" y="51" width="11" height="5" 
+                          data-concept="reliability" data-title="Reliability"
+                          data-definition="Does the AI work consistently across different conditions and over time? Includes stability and predictability of performance. &nbsp;The broader concepts are <b>Quality</b> and <b> Saftety</b>."></rect>
+                    <rect x="39" y="43" width="12" height="5" 
+                          data-concept="completeness" data-title="Completeness"
+                          data-definition="Does the content include all necessary and relevant information without significant gaps? Ensures comprehensive coverage of the problem domain. &nbsp;The broader concept is <b>Quality</b>."></rect>
+                    
+                    <!-- Safety Pillar - Center Top -->
+                    <rect x="70" y="8" width="10" height="6" 
+                          data-concept="safety" data-title="Safety"
+                          data-definition="Does the AI prevent patient harm and protect vulnerable populations? Includes clinical safety, data security, and population health protections. &nbsp; &nbsp;The narrower concepts are <b>Accuracy</b>, <b>Reliability</b>, <b> Risks</b>, <b> Ethical issues</b> and <b> Legal issues</b>.&nbsp;The broader concept is <b>User Acceptance</b>. &nbsp;The overlapped concept is <b>Quality</b>."></rect>
+                    <rect x="80" y="21" width="10" height="5" 
+                          data-concept="risks" data-title="Risks"
+                          data-definition="Could the AI cause large-scale negative consequences? Can errors be quickly detected and corrected? Involves risk assessment and mitigation strategies. &nbsp;The broader concept is <b>Safety</b>."></rect>
+                    <rect x="80" y="41" width="12" height="5" 
+                          data-concept="ethical_issues" data-title="Ethical Issues"
+                          data-definition="Is it fair to everyone? Does it cause harm? Is user data protected? Does it align with societal values? Includes fairness, transparency, accountability, and privacy. &nbsp;The broader concept is <b>Safety</b>."></rect>
+                    <rect x="78" y="60" width="13" height="5" 
+                          data-concept="legal_issues" data-title="Legal Issues"
+                          data-definition="Does it follow relevant laws? Is personal data handled legally? Who is responsible if something goes wrong? Covers regulatory compliance and liability. &nbsp;The broader concept is <b>Safety</b>."></rect>
+                    
+                    <!-- Usability Pillar - Right -->
+                    <rect x="10" y="85" width="12" height="6" 
+                          data-concept="usability" data-title="Usability"
+                          data-definition="Is the AI tool easy to use and intuitive for its intended users? Focuses on user experience, learnability, and efficiency of use. &nbsp;The broader concept is <b>User Acceptance</b>. &nbsp;The overlapped concept is <b>Readability</b>."></rect>
+                    <rect x="28" y="72" width="12" height="5" 
+                          data-concept="readability" data-title="Readability"
+                          data-definition="How easily and effectively does content communicate its message to its intended audience? Includes clarity, organization, and comprehensibility of outputs. &nbsp;The broader concept is <b>User Acceptance</b>. &nbsp;The overlapped concepts are <b>Usability</b> and <b> Accessibility</b>."></rect>
+                    <rect x="48" y="85" width="12" height="5" 
+                          data-concept="accessibility" data-title="Accessibility"
+                          data-definition="Can anyone use it, including people with disabilities or different technical backgrounds? Ensures equitable access across diverse user populations. &nbsp;The broader concept is <b>User Acceptance</b>. &nbsp;The overlapped concept is <b>Readability</b>."></rect>
+                    <rect x="70" y="86" width="20" height="5" 
+                          data-concept="emotional_factors" data-title="Emotional Factors"
+                          data-definition="How does it make users feel? Does it show understanding and care? Do users feel emotionally secure using it? &nbsp;The broader concept is <b>User Acceptance</b>."></rect>
+                    
+                    <!-- Contextual Factors - Bottom -->
+                    <rect x="9" y="10" width="13" height="6" 
+                          data-concept="applicability" data-title="Applicability"
+                          data-definition="Is it the right tool for the specific public health task and context? Assesses relevance and fit for the intended use case and environment. &nbsp;The broader concept is <b>User Acceptance</b>."></rect>
+                    <rect x="9" y="35" width="14" height="6" 
+                          data-concept="appropriateness" data-title="Appropriateness"
+                          data-definition="Is it suitable for the specific situation, considering cultural, social, and operational factors? Evaluates contextual fit and cultural sensitivity. &nbsp;The broader concept is <b>User Acceptance</b>."></rect>
+                    <rect x="11" y="55" width="10" height="10" 
+                          data-concept="economic_factors" data-title="Economic Factors"
+                          data-definition="Is it cost-effective? Does it provide positive return on investment while being sustainable? Includes cost-benefit analysis and long-term financial viability. &nbsp;The broader concept is <b>User Acceptance</b>."></rect>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <h3>How to Use This Interactive Figure</h3>
+            <p><strong>Hover</strong> over any concept in the diagram to see its detailed definition in the information panel above.</p>
+            <p><strong>Learning Tip:</strong> Use this interactive diagram to understand how concepts influenced by broader or narrower contextual factors.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="textbook-footer">
+        <p>Interactive Concept Viewers • © 2025 Min Wu</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const conceptInfo = document.getElementById('concept-info');
+            const showHotspotsCheckbox = document.getElementById('showHotspots');
+            const coordinateDisplay = document.getElementById('coordinate-display');
+            const hotspots = document.querySelectorAll('#hotspot-overlay rect');
+            const image = document.getElementById('concept-image');
+            
+            // Function to update SVG dimensions to match image exactly
+            function updateSvgDimensions() {
+                const svg = document.getElementById('hotspot-overlay');
+                const imageRect = image.getBoundingClientRect();
+                
+                // Set SVG dimensions to exactly match the displayed image
+                svg.style.width = imageRect.width + 'px';
+                svg.style.height = imageRect.height + 'px';
+            }
+            
+            // Toggle development mode
+            function toggleDevelopmentMode(show) {
+                if (show) {
+                    document.body.classList.add('development-mode');
+                } else {
+                    document.body.classList.remove('development-mode');
+                }
+            }
+            
+            // Add event listeners to SVG hotspots
+            hotspots.forEach(hotspot => {
+                hotspot.addEventListener('mouseover', function(e) {
+                    const definition = this.getAttribute('data-definition');
+                    const title = this.getAttribute('data-title');
+                    const x = this.getAttribute('x');
+                    const y = this.getAttribute('y');
+                    const width = this.getAttribute('width');
+                    const height = this.getAttribute('height');
+                    
+                    // Update fixed concept info section
+                    conceptInfo.innerHTML = `<h3>${title}</h3><p>${definition}</p>`;
+                    conceptInfo.classList.remove('empty');
+                    
+                    // Show coordinates in development panel
+                    coordinateDisplay.innerHTML = 
+                        `<strong>${title}</strong><br>
+                         Position: x=${x}%, y=${y}%<br>
+                         Size: width=${width}%, height=${height}%<br>
+                         <em>Edit these values in the HTML to reposition</em>`;
+                });
+                
+                hotspot.addEventListener('mouseout', function() {
+                    // Keep the info displayed until another hotspot is hovered
+                });
+                
+                hotspot.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const concept = this.getAttribute('data-concept');
+                    console.log(`Concept clicked: ${concept}`);
+                });
+            });
+            
+            // Update SVG when image loads and on window resize
+            image.addEventListener('load', updateSvgDimensions);
+            window.addEventListener('resize', updateSvgDimensions);
+            
+            // Handle checkbox change
+            showHotspotsCheckbox.addEventListener('change', function() {
+                toggleDevelopmentMode(this.checked);
+            });
+            
+            // Initialize
+            if (image.complete) {
+                updateSvgDimensions();
+            }
+            toggleDevelopmentMode(showHotspotsCheckbox.checked);
+        });
+    </script>
+</body>
+</html>
